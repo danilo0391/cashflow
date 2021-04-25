@@ -110,26 +110,46 @@ export default class Income extends Component {
 		this.setState(this.initialState);
 	};
 
-	// addIncome = (event) => {
+	// updateIncome = (event) => {
+	// 	//This fuction is not working
 	// 	event.preventDefault();
 
 	// 	const income = {
+	// 		id: this.state.id,
 	// 		date: this.state.date,
 	// 		description: this.state.description,
 	// 		value: this.state.value,
 	// 		category: this.state.category,
 	// 	};
 
-	// 	axios.post("http://localhost:8080/api/income", income).then((response) => {
-	// 		if (response.data != null) {
-	// 			this.setState({ show: true, method: "post" });
-	// 			setTimeout(() => this.setState({ show: false }), 3000);
-	// 		} else {
-	// 			this.setState({ show: false });
-	// 		}
-	// 	});
+	// 	console.log("essa e a variavel antes do fetch" + income);
+
+	// 	const headers = new Headers();
+	// 	headers.append("Content-Type", "application/json");
+
+	// 	fetch("https://localhost:8080/api/incomes", income.id, {
+	// 		method: "PUT",
+	// 		body: JSON.stringify(income),
+	// 		headers,
+	// 	})
+	// 		.then((response) => response.json())
+	// 		.then((income) => {
+	// 			if (income) {
+	// 				this.setState({ show: true, method: "put" });
+	// 				setTimeout(() => this.setState({ show: false }), 3000);
+	// 				setTimeout(() => this.incomeList(), 3000);
+	// 				console.log("essa e a variavel depois do fetch" + income);
+	// 			} else {
+	// 				this.setState({ show: false });
+	// 				console.log("essa e a variavel depois do fetch" + income);
+	// 			}
+	// 		})
+	// 		.catch((error) => {
+	// 			console.log("Error: ", error);
+	// 		});
 
 	// 	this.setState(this.initialState);
+	// 	console.log("essa e a variavel no final da funcao" + income);
 	// };
 
 	updateIncome = (event) => {
@@ -143,17 +163,18 @@ export default class Income extends Component {
 			category: this.state.category,
 		};
 
-		const headers = new Headers();
-		headers.append("Content-Type", "application/json");
+		console.log(income);
 
-		fetch("http://localhost:8080/api/incomes", {
-			method: "PUT",
-			body: JSON.stringify(income),
-			headers,
-		})
-			.then((response) => response.json()) //precisa funcionar com o metedo certo "PUT"
-			.then((income) => {
-				if (income) {
+		axios
+			.put("http://localhost:8080/api/incomes/" + income.id, {
+				id: income.id,
+				date: income.date,
+				description: income.description,
+				value: income.value,
+				category: income.category,
+			})
+			.then((response) => {
+				if (response.data != null) {
 					this.setState({ show: true, method: "put" });
 					setTimeout(() => this.setState({ show: false }), 3000);
 					setTimeout(() => this.incomeList(), 3000);
@@ -164,32 +185,6 @@ export default class Income extends Component {
 
 		this.setState(this.initialState);
 	};
-
-	// updateIncome = (event) => {
-	// 	event.preventDefault();
-
-	// 	const income = {
-	// 		id: this.state.id,
-	// 		date: this.state.date,
-	// 		description: this.state.description,
-	// 		value: this.state.value,
-	// 		category: this.state.category,
-	// 	};
-
-	// 	axios
-	// 		.put("http://localhost:8080/api/incomes/" + income) //precisa funcionar com o metedo certo "PUT"
-	// 		.then((response) => {
-	// 			if (response.data != null) {
-	// 				this.setState({ show: true, method: "put" });
-	// 				setTimeout(() => this.setState({ show: false }), 3000);
-	// 				setTimeout(() => this.incomeList(), 3000);
-	// 			} else {
-	// 				this.setState({ show: false });
-	// 			}
-	// 		});
-
-	// 	this.setState(this.initialState);
-	// };
 
 	incomeChange = (event) => {
 		this.setState({
