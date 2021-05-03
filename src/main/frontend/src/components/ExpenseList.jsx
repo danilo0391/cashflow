@@ -7,30 +7,24 @@ import { faEdit, faList, faTrash } from '@fortawesome/free-solid-svg-icons';
 import MyToast from "./MyToast";
 import axios from "axios";
 
-export default class IncomeList extends Component {
+export default class ExpenseList extends Component {
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			incomes: [],
+			expenses: [],
 		};
 	}
 
 	componentDidMount() {
-    this.findAllIncomes();
+    this.findAllExpenses();
 	}
 
-	// componentDidMount() {
-  //   IncomeService.getIncome().then((res) => {
-  //     this.setState({ income: res.data});
-  //   });
-	// }
-
-	findAllIncomes() {
-		fetch("http://localhost:8080/api/incomes")
+	findAllExpenses() {
+		fetch("http://localhost:8080/api/expenses")
 		.then(response => response.json())
 		.then((data) => {
-			this.setState({incomes: data});
+			this.setState({expenses: data});
 		})
 	};
 
@@ -52,14 +46,14 @@ export default class IncomeList extends Component {
 	// 	})
 	// };
 
-	deleteIncome = (incomeId) => {
-		axios.delete("http://localhost:8080/api/incomes/" + incomeId)
+	deleteExpense = (expenseId) => {
+		axios.delete("http://localhost:8080/api/expenses/" + expenseId)
 		.then(response => {
 			if(response.data != null){
 				this.setState({ show: true });
 				setTimeout(() => this.setState({ show: false }), 3000);
 				this.setState({
-					incomes: this.state.incomes.filter(income => income.id !== incomeId)
+					expenses: this.state.expenses.filter(expense => expense.id !== expenseId)
 				});
 			} else {
 				this.setState({ show: false });
@@ -71,11 +65,11 @@ export default class IncomeList extends Component {
 		return (
 			<div>
 				<div style={{ display: this.state.show ? "block" : "none" }}>
-					<MyToast show = {this.state.show} message = {"Income Deleted Successfully."} type = {"danger"}/>
+					<MyToast show = {this.state.show} message = {"Expense Deleted Successfully."} type = {"danger"}/>
 				</div>
 
 				<Card className={"border border-ligth bg-light"}>
-				<Card.Header><FontAwesomeIcon icon={faList}/> Income List</Card.Header>
+				<Card.Header><FontAwesomeIcon icon={faList}/> Expenses List</Card.Header>
 				<Card.Body>
 				<div>
 					<Table bordered hover striped variant="ligth">
@@ -91,21 +85,21 @@ export default class IncomeList extends Component {
 						</tbody>
 						<tbody>
 							{
-							this.state.incomes.length === 0 ?
+							this.state.expenses.length === 0 ?
 							<tr aling="center">
-								<td colSpan="6"> No Incomes Available</td>
+								<td colSpan="6"> No Expenses Available</td>
 							</tr> :
-							this.state.incomes.map((income) => (
-								<tr key={income.id}>
-									<td> {income.id}</td>
-									<td> {income.description} </td>
-									<td> €{income.value} </td>
-									<td> {income.category} </td>
-									<td> {income.date} </td>
+							this.state.expenses.map((expense) => (
+								<tr key={expense.id}>
+									<td> {expense.id}</td>
+									<td> {expense.description} </td>
+									<td> €{expense.value} </td>
+									<td> {expense.category} </td>
+									<td> {expense.date} </td>
 									<td>
 										<ButtonGroup>
-											<Link to={"editIncome/" + income.id} className="btn btn-sm btn-outline-primary"> <FontAwesomeIcon icon={faEdit}/></Link>{' '}
-											<Button size="sm" variant="outline-primary" onClick={this.deleteIncome.bind(this, income.id)}><FontAwesomeIcon icon={faTrash}/></Button>
+											<Link to={"editExpense/" + expense.id} className="btn btn-sm btn-outline-primary"> <FontAwesomeIcon icon={faEdit}/></Link>{' '}
+											<Button size="sm" variant="outline-primary" onClick={this.deleteExpense.bind(this, expense.id)}><FontAwesomeIcon icon={faTrash}/></Button>
 										</ButtonGroup>
 									</td>
 								</tr>

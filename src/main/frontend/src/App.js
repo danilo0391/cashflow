@@ -9,6 +9,8 @@ import Footer from "./components/Footer";
 import User from "./components/User";
 import Income from "./components/Income";
 import IncomeList from "./components/IncomeList";
+import Expense from "./components/Expense";
+import ExpenseList from "./components/ExpenseList";
 import UserList from "./components/UserList";
 
 export default function App() {
@@ -32,9 +34,12 @@ export default function App() {
 								exact
 								component={() => <Welcome heading={heading} desc={desc} />}
 							/>
-							<Route path="/add" exact component={Income} />
-							<Route path="/edit/:id" exact component={Income} />
-							<Route path="/list" exact component={IncomeList} />
+							<Route path="/addIncome" exact component={Income} />
+							<Route path="/editIncome/:id" exact component={Income} />
+							<Route path="/listIncome" exact component={IncomeList} />
+							<Route path="/addExpense" exact component={Expense} />
+							<Route path="/editExpense/:id" exact component={Expense} />
+							<Route path="/listExpense" exact component={ExpenseList} />
 							<Route path="/users" exact component={UserList} />
 						</Switch>
 					</Col>

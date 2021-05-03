@@ -25,7 +25,7 @@ public class IncomeController {
     public Income getIncome(@PathVariable(value = "id") Long id){
 
         return incomeRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("User not found")
+                ()-> new ResourceNotFoundException("Income not found")
         );
     }
 

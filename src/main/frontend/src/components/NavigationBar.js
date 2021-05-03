@@ -10,11 +10,17 @@ export default function NavigationBar() {
 				Home
 			</Link>
 			<Nav className="mr-auto">
-				<Link to={"add"} className="nav-link">
+				<Link to={"addIncome"} className="nav-link">
 					Add Income
 				</Link>
-				<Link to={"list"} className="nav-link">
+				<Link to={"listIncome"} className="nav-link">
 					Incomes List
+				</Link>
+				<Link to={"addExpense"} className="nav-link">
+					Add Expense
+				</Link>
+				<Link to={"listExpense"} className="nav-link">
+					Expenses List
 				</Link>
 				<Link to={"users"} className="nav-link">
 					Users List
