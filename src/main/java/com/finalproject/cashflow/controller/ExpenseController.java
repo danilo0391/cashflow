@@ -17,7 +17,7 @@ public class ExpenseController {
     private ExpenseRespository expenseRespository;
 
     @GetMapping("/expenses")
-    public List<Expense> getAllExpense(){
+    public List<Expense> getAll(){
         return expenseRespository.findAll();
     }
 
