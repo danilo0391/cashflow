@@ -20,17 +20,20 @@ export default class IncomeList extends Component {
     this.findAllIncomes();
 	}
 
-	// componentDidMount() {
-  //   IncomeService.getIncome().then((res) => {
-  //     this.setState({ income: res.data});
-  //   });
-	// }
+
+	// findAllIncomes() {
+	// 	fetch("http://localhost:8080/api/incomes")
+	// 	.then(response => response.json())
+	// 	.then((data) => {
+	// 		this.setState({incomes: data});
+	// 	})
+	// };
 
 	findAllIncomes() {
-		fetch("http://localhost:8080/api/incomes")
-		.then(response => response.json())
+		axios.get("http://localhost:8080/api/incomes")
+		.then(response => response.data)
 		.then((data) => {
-			this.setState({incomes: data});
+			this.setState({incomes: data});	
 		})
 	};
 

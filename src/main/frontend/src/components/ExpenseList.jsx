@@ -20,14 +20,21 @@ export default class ExpenseList extends Component {
     this.findAllExpenses();
 	}
 
+	// findAllExpenses() {
+	// 	fetch("http://localhost:8080/api/expenses")
+	// 	.then(response => response.json())
+	// 	.then((data) => {
+	// 		this.setState({expenses: data});
+	// 	})
+	// };
+
 	findAllExpenses() {
-		fetch("http://localhost:8080/api/expenses")
-		.then(response => response.json())
+		axios.get("http://localhost:8080/api/expenses")
+		.then(response => response.data)
 		.then((data) => {
 			this.setState({expenses: data});
 		})
 	};
-
 	// deleteIncome = (incomeId) => {
 	// 	fetch("http://localhost:8080/api/income" + incomeId, {
 	// 		method: "DELETE"
