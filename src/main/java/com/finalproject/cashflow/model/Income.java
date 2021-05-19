@@ -3,7 +3,7 @@ package com.finalproject.cashflow.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "income")
+@Table(name = "incomes")
 public class Income {
 
     @Id

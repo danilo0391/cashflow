@@ -4,6 +4,7 @@ import com.finalproject.cashflow.exceptions.ResourceNotFoundException;
 import com.finalproject.cashflow.model.Expense;
 import com.finalproject.cashflow.repository.ExpenseRespository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,11 +18,13 @@ public class ExpenseController {
     private ExpenseRespository expenseRespository;
 
     @GetMapping("/expenses")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public List<Expense> getAllExpense(){
         return expenseRespository.findAll();
     }
 
     @GetMapping("/expenses/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public Expense getExpenseById(@PathVariable(value = "id") Long id){
         return expenseRespository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Expense not found")
@@ -29,11 +32,13 @@ public class ExpenseController {
     }
 
     @PostMapping("/expenses")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public Expense addExpense(@RequestBody Expense expense){
         return expenseRespository.save(expense);
     }
 
     @PutMapping("/expenses/{id}")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public Expense updateExpense(@RequestBody Expense newExpense, @PathVariable(value = "id") Long id){
         return expenseRespository.findById(id)
                 .map(expense -> {
@@ -50,6 +55,7 @@ public class ExpenseController {
     }
 
     @DeleteMapping("expenses/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteExpense(@PathVariable(value = "id") Long id){
         Expense expense = expenseRespository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Expense not found")

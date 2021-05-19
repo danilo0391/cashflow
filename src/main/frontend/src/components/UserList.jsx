@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { ButtonGroup, Card, Table, Button, InputGroup, FormControl } from "react-bootstrap";
 
-import UserService from "../service/UserService";
-
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faUsers, faTrash, faStepBackward, faFastBackward, faStepForward, faFastForward } from '@fortawesome/free-solid-svg-icons';
@@ -21,13 +19,19 @@ export default class UsersComponent extends Component {
 	}
 
 	componentDidMount() {
-		UserService.getUsers().then((res) => {
-			this.setState({ users: res.data });
-		});
+    this.findAllUsers();
 	}
 
+	findAllUsers() {
+		axios.get("http://localhost:8080/api/users")
+		.then(response => response.data)
+		.then((data) => {
+			this.setState({users: data});	
+		})
+	};
+
 	deleteUser = (userId) => {
-		axios.delete("http://localhost:8080/api/user/" + userId)
+		axios.delete("http://localhost:8080/api/users/" + userId)
 		.then(response => {
 			if(response.data != null){
 				this.setState({ show: true });

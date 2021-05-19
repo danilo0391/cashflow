@@ -20,7 +20,7 @@ export default function App() {
 
 	const heading = "Welcome to Cash Flow App";
 	const desc =
-		"In this application you gonna be able to add, delete, update, and read data from the database.";
+		"In this application you are going to be able to add, delete, update, and read data from the database. Graphs will dynamically populate the dashboard area showing the balance, history of expenses and incomes.";
 
 	return (
 		<Router>

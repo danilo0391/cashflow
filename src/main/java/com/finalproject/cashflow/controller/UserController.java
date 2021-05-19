@@ -4,6 +4,7 @@ import com.finalproject.cashflow.exceptions.ResourceNotFoundException;
 import com.finalproject.cashflow.model.User;
 import com.finalproject.cashflow.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,11 +18,13 @@ public class UserController {
     private UserRepository userRepository;
 
     @GetMapping("/users")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public List<User> getAllUsers(){
         return userRepository.findAll();
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/users/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public User getUser(@PathVariable(value = "id") Long id){
 
         return userRepository.findById(id).orElseThrow(
@@ -29,17 +32,17 @@ public class UserController {
         );
     }
 
-    @PostMapping("/user")
+    @PostMapping("/users")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public User saveUser(@RequestBody User user){
         return userRepository.save(user);
     }
 
-    @PutMapping("/user/{id}")
+    @PutMapping("/users/{id}")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public User updateUser(@RequestBody User newUser, @PathVariable(value = "id") Long id){
         return userRepository.findById(id)
                 .map(user -> {
-                    user.setName(newUser.getName());
-                    user.setSurname(newUser.getSurname());
                     user.setUsername(newUser.getUsername());
                     user.setEmail(newUser.getEmail());
                     user.setPassword(newUser.getPassword());
@@ -51,7 +54,8 @@ public class UserController {
                 });
     }
 
-    @DeleteMapping("user/{id}")
+    @DeleteMapping("users/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void removeUser(@PathVariable(value = "id") Long id){
         User user = userRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("User not found")
