@@ -8,17 +8,20 @@ import {
 	faList,
 	faEdit,
 } from "@fortawesome/free-solid-svg-icons";
-import MyToast from "./MyToast";
+import MyToast from "../MyToast";
+import authHeader from "../../services/auth-header";
 
 import axios from "axios";
 
-export default class Income extends Component {
+const API_URL = "http://localhost:8080/api/expenses/";
+
+export default class Expense extends Component {
 	constructor(props) {
 		super(props);
 		this.state = this.initialState;
 		this.state.show = false;
-		this.updateIncome = this.updateIncome.bind(this);
-		this.addIncome = this.addIncome.bind(this);
+		this.updateExpense = this.updateExpense.bind(this);
+		this.addExpense = this.addExpense.bind(this);
 	}
 
 	initialState = {
@@ -30,23 +33,25 @@ export default class Income extends Component {
 	};
 
 	componentDidMount() {
-		const incomeId = +this.props.match.params.id;
-		if (incomeId) {
-			this.findIncomeById(incomeId);
+		const expenseId = +this.props.match.params.id;
+		if (expenseId) {
+			this.findExpenseById(expenseId);
 		}
 	}
 
-	findIncomeById = (incomeId) => {
-		fetch("http://localhost:8080/api/incomes/" + incomeId)
-			.then((response) => response.json())
-			.then((income) => {
-				if (income) {
+	findExpenseById = (expenseId) => {
+		axios
+			.get(API_URL + expenseId, {
+				headers: { Authorization: authHeader().Authorization },
+			})
+			.then((response) => {
+				if (response.data != null) {
 					this.setState({
-						id: income.id,
-						date: income.date,
-						description: income.description,
-						value: income.value,
-						category: income.category,
+						id: response.data.id,
+						date: response.data.date,
+						description: response.data.description,
+						value: response.data.value,
+						category: response.data.category,
 					});
 				}
 			})
@@ -55,51 +60,25 @@ export default class Income extends Component {
 			});
 	};
 
-	// findIncomeById = (incomeId) => {
-	// 	axios
-	// 		.get("http://localhost:8080/api/income/" + incomeId)
-	// 		.then((response) => {
-	// 			if (response.data != null) {
-	// 				this.setState({
-	// 					id: response.data.id,
-	// 					date: response.data.date,
-	// 					description: response.data.description,
-	// 					value: response.data.value,
-	// 					category: response.data.category,
-	// 				});
-	// 			}
-	// 		})
-	// 		.catch((error) => {
-	// 			console.error("Error - " + error);
-	// 		});
-	// };
-
-	resetIncome = () => {
+	resetExpense = () => {
 		this.setState(() => this.initialState);
 	};
 
-	addIncome = (event) => {
+	addExpense = (event) => {
 		event.preventDefault();
 
-		const income = {
+		const expense = {
 			date: this.state.date,
 			description: this.state.description,
 			value: this.state.value,
 			category: this.state.category,
 		};
-
-		const headers = new Headers();
-		headers.append("Content-Type", "application/json");
-
-		fetch("http://localhost:8080/api/incomes", {
-			method: "POST",
-			body: JSON.stringify(income),
-			headers,
-		})
-			.then((response) => response.json())
-
-			.then((income) => {
-				if (income) {
+		axios
+			.post(API_URL, expense, {
+				headers: { Authorization: authHeader().Authorization },
+			})
+			.then((response) => {
+				if (response.data != null) {
 					this.setState({ show: true, method: "post" });
 					setTimeout(() => this.setState({ show: false }), 3000);
 				} else {
@@ -110,50 +89,10 @@ export default class Income extends Component {
 		this.setState(this.initialState);
 	};
 
-	// updateIncome = (event) => {
-	// 	//This fuction is not working
-	// 	event.preventDefault();
-
-	// 	const income = {
-	// 		id: this.state.id,
-	// 		date: this.state.date,
-	// 		description: this.state.description,
-	// 		value: this.state.value,
-	// 		category: this.state.category,
-	// 	};
-
-	// 	const headers = new Headers();
-	// 	headers.append("Content-Type", "application/json");
-
-	// 	fetch("https://localhost:8080/api/incomes", {
-	// 		method: "PUT",
-	// 		body: JSON.stringify(income),
-	// 		headers,
-	// 	})
-	// 		.then((response) => response.json())
-	// 		.then((income) => {
-	// 			if (income) {
-	// 				this.setState({ show: true, method: "put" });
-	// 				setTimeout(() => this.setState({ show: false }), 3000);
-	// 				setTimeout(() => this.incomeList(), 3000);
-	// 				console.log("essa e a variavel depois do fetch" + income);
-	// 			} else {
-	// 				this.setState({ show: false });
-	// 				console.log("essa e a variavel depois do fetch" + income);
-	// 			}
-	// 		})
-	// 		.catch((error) => {
-	// 			console.log("Error: ", error);
-	// 		});
-
-	// 	this.setState(this.initialState);
-	// 	console.log("essa e a variavel no final da funcao" + income);
-	// };
-
-	updateIncome = (event) => {
+	updateExpense = (event) => {
 		event.preventDefault();
 
-		const income = {
+		const expense = {
 			id: this.state.id,
 			date: this.state.date,
 			description: this.state.description,
@@ -162,12 +101,14 @@ export default class Income extends Component {
 		};
 
 		axios
-			.put("http://localhost:8080/api/incomes/" + income.id, income)
+			.put(API_URL + expense.id, expense, {
+				headers: { Authorization: authHeader().Authorization },
+			})
 			.then((response) => {
 				if (response.data != null) {
 					this.setState({ show: true, method: "put" });
 					setTimeout(() => this.setState({ show: false }), 2000);
-					setTimeout(() => this.incomeList(), 2000);
+					setTimeout(() => this.expenseList(), 2000);
 				} else {
 					this.setState({ show: false });
 				}
@@ -176,14 +117,14 @@ export default class Income extends Component {
 		this.setState(this.initialState);
 	};
 
-	incomeChange = (event) => {
+	expenseChange = (event) => {
 		this.setState({
 			[event.target.name]: event.target.value,
 		});
 	};
 
-	incomeList = () => {
-		return this.props.history.push("/listIncome");
+	expenseList = () => {
+		return this.props.history.push("/listExpense");
 	};
 
 	render() {
@@ -196,8 +137,8 @@ export default class Income extends Component {
 						show={this.state.show}
 						message={
 							this.state.method === "put"
-								? "Income Updated Successfully."
-								: "Income Saved Successfully."
+								? "Expense Updated Successfully."
+								: "Expense Saved Successfully."
 						}
 						type={"success"}
 					/>
@@ -209,13 +150,13 @@ export default class Income extends Component {
 						<FontAwesomeIcon
 							icon={this.state.id ? faEdit : faPlusCircle}
 						/>{" "}
-						{this.state.id ? "Update Income" : "Add New Income"}
+						{this.state.id ? "Update Expense" : "Add New Expense"}
 					</Card.Header>
 
 					<Form
-						onReset={this.resetIncome}
-						onSubmit={this.state.id ? this.updateIncome : this.addIncome}
-						id="incomeFormId"
+						onReset={this.resetExpense}
+						onSubmit={this.state.id ? this.updateExpense : this.addExpense}
+						id="expenseFormId"
 					>
 						<Card.Body>
 							<Form.Row>
@@ -227,7 +168,7 @@ export default class Income extends Component {
 										type="date"
 										name="date"
 										value={date}
-										onChange={this.incomeChange}
+										onChange={this.expenseChange}
 										className={"bg-ligth"}
 										placeholder="Enter date"
 									/>
@@ -240,7 +181,7 @@ export default class Income extends Component {
 										type="text"
 										name="description"
 										value={description}
-										onChange={this.incomeChange}
+										onChange={this.expenseChange}
 										className={"bg-ligth"}
 										placeholder="Enter description"
 									/>
@@ -259,7 +200,7 @@ export default class Income extends Component {
 										max="9999999"
 										name="value"
 										value={value}
-										onChange={this.incomeChange}
+										onChange={this.expenseChange}
 										className={"bg-ligth"}
 										placeholder="Enter value"
 									/>
@@ -272,7 +213,7 @@ export default class Income extends Component {
 										type="text"
 										name="category"
 										value={category}
-										onChange={this.incomeChange}
+										onChange={this.expenseChange}
 										className={"bg-ligth"}
 										placeholder="Enter category"
 									/>
@@ -291,9 +232,9 @@ export default class Income extends Component {
 								size="small"
 								variant="info"
 								type="button"
-								onClick={this.incomeList.bind()}
+								onClick={this.expenseList.bind()}
 							>
-								<FontAwesomeIcon icon={faList} /> Income List
+								<FontAwesomeIcon icon={faList} /> Expense List
 							</Button>
 						</Card.Footer>
 					</Form>

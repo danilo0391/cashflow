@@ -4,8 +4,12 @@ import { ButtonGroup, Card, Table, Button, InputGroup, FormControl } from "react
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faUsers, faTrash, faStepBackward, faFastBackward, faStepForward, faFastForward } from '@fortawesome/free-solid-svg-icons';
-import MyToast from "./MyToast";
+import MyToast from "../MyToast";
+
 import axios from "axios";
+import authHeader from "../../services/auth-header";
+
+const API_URL = "http://localhost:8080/api/users/";
 
 export default class UsersComponent extends Component {
 
@@ -23,7 +27,9 @@ export default class UsersComponent extends Component {
 	}
 
 	findAllUsers() {
-		axios.get("http://localhost:8080/api/users")
+		axios.get(API_URL, {
+			headers: { Authorization: authHeader().Authorization },
+		})
 		.then(response => response.data)
 		.then((data) => {
 			this.setState({users: data});	
@@ -31,7 +37,9 @@ export default class UsersComponent extends Component {
 	};
 
 	deleteUser = (userId) => {
-		axios.delete("http://localhost:8080/api/users/" + userId)
+		axios.delete(API_URL + userId, {
+			headers: { Authorization: authHeader().Authorization },
+		})
 		.then(response => {
 			if(response.data != null){
 				this.setState({ show: true });
@@ -117,8 +125,6 @@ export default class UsersComponent extends Component {
 						<tbody>
 							<tr>
 								<th>ID</th>
-								<th>Name</th>
-								<th>Surname</th>
 								<th>Username</th>
 								<th>Email</th>
 								<th>Password</th>
@@ -134,14 +140,12 @@ export default class UsersComponent extends Component {
 							currentUsers.map((users, index) => (
 								<tr key={index}>
 									<td> {users.id}</td>
-									<td> {users.name} </td>
-									<td> {users.surname} </td>
 									<td> {users.username} </td>
 									<td> {users.email} </td>
 									<td> {users.password} </td>
 									<td>
 										<ButtonGroup>
-											<Link to={"edit/" + users.id} className="btn btn-sm btn-outline-primary"> <FontAwesomeIcon icon={faEdit}/></Link>{ " " }
+											<Link to={"editUser/" + users.id} className="btn btn-sm btn-outline-primary"> <FontAwesomeIcon icon={faEdit}/></Link>{ " " }
 											<Button size="sm" variant="outline-primary" onClick={this.deleteUser.bind(this, users.id)}><FontAwesomeIcon icon={faTrash}/></Button>
 										</ButtonGroup>
 									</td>
@@ -158,19 +162,19 @@ export default class UsersComponent extends Component {
 					<div style={{"float":"right"}}>
 								<InputGroup>
 									<InputGroup.Prepend>
-										<Button disable={currentPage === 1 ? true : false} onClick={this.firstPage}>
+										<Button type="button" disable={currentPage === 1 ? true : false} onClick={this.firstPage}>
 											<FontAwesomeIcon icon={faFastBackward}/> First
 										</Button>
-										<Button disable={currentPage === 1 ? true : false} onClick={this.prevPage}>
+										<Button type="button" disable={currentPage === 1 ? true : false} onClick={this.prevPage}>
 											<FontAwesomeIcon icon={faStepBackward}/> Prev
 										</Button>
 									</InputGroup.Prepend>
 									<FormControl style={pageNumCss} name="currentPage" value={currentPage} onChange={this.changePage}/>
 									<InputGroup.Append>
-										<Button disable={currentPage === totalPages ? true : false} onClick={this.nextPage}>
+										<Button type="button" disable={currentPage === totalPages ? true : false} onClick={this.nextPage}>
 											<FontAwesomeIcon icon={faStepForward}/> Next
 										</Button>
-										<Button disable={currentPage === totalPages ? true : false} onClick={this.lastPage}>
+										<Button type="button" disable={currentPage === totalPages ? true : false} onClick={this.lasttPage}>
 											<FontAwesomeIcon icon={faFastForward}/> Last
 										</Button>
 									</InputGroup.Append>
@@ -179,13 +183,7 @@ export default class UsersComponent extends Component {
 					</div>
 				</Card.Footer>
 			</Card>
-
 			</div>
-			
-			// <div>
-			// 	User List
-				
-			// </div>
 		);
 	}
 }

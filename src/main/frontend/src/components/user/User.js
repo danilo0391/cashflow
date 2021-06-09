@@ -8,9 +8,12 @@ import {
 	faList,
 	faEdit,
 } from "@fortawesome/free-solid-svg-icons";
-import MyToast from "./MyToast";
+import MyToast from "../MyToast";
+import authHeader from "../../services/auth-header";
 
 import axios from "axios";
+
+const API_URL = "http://localhost:8080/api/users/";
 
 export default class User extends Component {
 	constructor(props) {
@@ -18,13 +21,11 @@ export default class User extends Component {
 		this.state = this.initialState;
 		this.state.show = false;
 		this.userChange = this.userChange.bind(this);
-		this.submitUser = this.submitUser.bind(this);
+		this.addUser = this.addUser.bind(this);
 	}
 
 	initialState = {
 		id: "",
-		name: "",
-		surname: "",
 		username: "",
 		email: "",
 		password: "",
@@ -39,13 +40,13 @@ export default class User extends Component {
 
 	findUserById = (userId) => {
 		axios
-			.get("http://localhost:8080/api/user/" + userId)
+			.get(API_URL + userId, {
+				headers: { Authorization: authHeader().Authorization },
+			})
 			.then((response) => {
 				if (response.data != null) {
 					this.setState({
 						id: response.data.id,
-						name: response.data.name,
-						surname: response.data.surname,
 						username: response.data.username,
 						email: response.data.email,
 						password: response.data.password,
@@ -61,25 +62,27 @@ export default class User extends Component {
 		this.setState(() => this.initialState);
 	};
 
-	submitUser = (event) => {
+	addUser = (event) => {
 		event.preventDefault();
 
 		const user = {
-			name: this.state.name,
-			surname: this.state.surname,
 			username: this.state.username,
 			email: this.state.email,
 			password: this.state.password,
 		};
 
-		axios.post("http://localhost:8080/api/user", user).then((response) => {
-			if (response.data != null) {
-				this.setState({ show: true, method: "post" });
-				setTimeout(() => this.setState({ show: false }), 3000);
-			} else {
-				this.setState({ show: false });
-			}
-		});
+		axios
+			.post(API_URL, user, {
+				headers: { Authorization: authHeader().Authorization },
+			})
+			.then((response) => {
+				if (response.data != null) {
+					this.setState({ show: true, method: "post" });
+					setTimeout(() => this.setState({ show: false }), 3000);
+				} else {
+					this.setState({ show: false });
+				}
+			});
 
 		this.setState(this.initialState);
 	};
@@ -89,23 +92,24 @@ export default class User extends Component {
 
 		const user = {
 			id: this.state.id,
-			name: this.state.name,
-			surname: this.state.surname,
 			username: this.state.username,
 			email: this.state.email,
 			password: this.state.password,
 		};
 
-		axios.put("http://localhost:8080/api/user" + user.id).then((response) => {
-			//precisa funcionar com o metedo certo "PUT"
-			if (response.data != null) {
-				this.setState({ show: true, method: "put" });
-				setTimeout(() => this.setState({ show: false }), 3000);
-				setTimeout(() => this.userList(), 2000);
-			} else {
-				this.setState({ show: false });
-			}
-		});
+		axios
+			.put(API_URL + user.id, user, {
+				headers: { Authorization: authHeader().Authorization },
+			})
+			.then((response) => {
+				if (response.data != null) {
+					this.setState({ show: true, method: "put" });
+					setTimeout(() => this.setState({ show: false }), 3000);
+					setTimeout(() => this.userList(), 2000);
+				} else {
+					this.setState({ show: false });
+				}
+			});
 
 		this.setState(this.initialState);
 	};
@@ -117,11 +121,11 @@ export default class User extends Component {
 	};
 
 	userList = () => {
-		return this.props.history.push("/list");
+		return this.props.history.push("/listUser");
 	};
 
 	render() {
-		const { name, surname, username, email, password } = this.state;
+		const { username, email, password } = this.state;
 
 		return (
 			<div>
@@ -148,11 +152,11 @@ export default class User extends Component {
 
 					<Form
 						onReset={this.resetUser}
-						onSubmit={this.state.id ? this.updateUser : this.submitUser}
+						onSubmit={this.state.id ? this.updateUser : this.addUser}
 						id="userFormId"
 					>
 						<Card.Body>
-							<Form.Row>
+							{/* <Form.Row>
 								<Form.Group as={Col} controlId="formGridName">
 									<Form.Label>First Name</Form.Label>
 									<Form.Control
@@ -179,7 +183,7 @@ export default class User extends Component {
 										placeholder="Enter surname"
 									/>
 								</Form.Group>
-							</Form.Row>
+							</Form.Row> */}
 
 							<Form.Row>
 								<Form.Group as={Col} controlId="formGridUsername">

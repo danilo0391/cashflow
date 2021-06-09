@@ -24,7 +24,7 @@ public class IncomeController {
     }
 
     @GetMapping("/incomes/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public Income getIncome(@PathVariable(value = "id") Long id){
 
         return incomeRepository.findById(id).orElseThrow(
