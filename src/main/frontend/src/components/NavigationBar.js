@@ -60,7 +60,7 @@ export default class NavigationBar extends Component {
 			</>
 		);
 
-		const regularUser = (
+		const regularUserLinks = (
 			<>
 				<Nav className="mr-auto">
 					<Link to={"listIncome"} className="nav-link">
@@ -87,7 +87,15 @@ export default class NavigationBar extends Component {
 				<Link to={""} className="navbar-brand">
 					Home
 				</Link>
-				{AuthService.getCurrentUser() ? superUserLinks : guestLinks}
+				{
+					/* {AuthService.getCurrentUser() ? superUserLinks : guestLinks} */
+					AuthService.getCurrentUser() === null
+						? guestLinks
+						: AuthService.getCurrentUser().roles[0] === "ROLE_ADMIN" ||
+						  AuthService.getCurrentUser().roles[0] === "ROLE_MODERATOR"
+						? superUserLinks
+						: regularUserLinks
+				}
 			</Navbar>
 		);
 	}
