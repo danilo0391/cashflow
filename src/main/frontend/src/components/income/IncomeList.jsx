@@ -101,7 +101,7 @@ export default class IncomeList extends Component {
 		const lastIndex = currentPage * incomesPerPage;
 		const firstIndex = lastIndex - incomesPerPage;
 		const currentIncomes = incomes.slice(firstIndex, lastIndex);
-		const totalPages = incomes.length / incomesPerPage;
+		const totalPages = Math.ceil(incomes.length / incomesPerPage);
 
 		const pageNumCss = {
 			width: "45px",
@@ -149,7 +149,7 @@ export default class IncomeList extends Component {
 									<td>
 										<ButtonGroup>
 											<Link to={"editIncome/" + incomes.id} className="btn btn-sm btn-outline-primary"> <FontAwesomeIcon icon={faEdit}/></Link>{' '}
-											<Button size="sm" variant="outline-primary" onClick={this.deleteIncome.bind(this, incomes.id)}><FontAwesomeIcon icon={faTrash}/></Button>
+											<Button size="sm" variant="outline-danger" onClick={this.deleteIncome.bind(this, incomes.id)}><FontAwesomeIcon icon={faTrash}/></Button>
 										</ButtonGroup>
 									</td>
 								</tr>

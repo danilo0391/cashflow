@@ -101,7 +101,7 @@ export default class UsersComponent extends Component {
 		const lastIndex = currentPage * usersPerPage;
 		const firstIndex = lastIndex - usersPerPage;
 		const currentUsers = users.slice(firstIndex, lastIndex);
-		const totalPages = users.length / usersPerPage;
+		const totalPages = Math.ceil(users.length / usersPerPage);
 
 		const pageNumCss = {
 			width: "45px",
@@ -146,7 +146,7 @@ export default class UsersComponent extends Component {
 									<td>
 										<ButtonGroup>
 											<Link to={"editUser/" + users.id} className="btn btn-sm btn-outline-primary"> <FontAwesomeIcon icon={faEdit}/></Link>{ " " }
-											<Button size="sm" variant="outline-primary" onClick={this.deleteUser.bind(this, users.id)}><FontAwesomeIcon icon={faTrash}/></Button>
+											<Button size="sm" variant="outline-danger" onClick={this.deleteUser.bind(this, users.id)}><FontAwesomeIcon icon={faTrash}/></Button>
 										</ButtonGroup>
 									</td>
 								</tr>

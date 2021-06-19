@@ -101,7 +101,7 @@ export default class ExpenseList extends Component {
 		const lastIndex = currentPage * expensesPerPage;
 		const firstIndex = lastIndex - expensesPerPage;
 		const currentexpenses = expenses.slice(firstIndex, lastIndex);
-		const totalPages = expenses.length / expensesPerPage;
+		const totalPages = Math.ceil(expenses.length / expensesPerPage);
 
 		const pageNumCss = {
 			width: "45px",
@@ -146,7 +146,7 @@ export default class ExpenseList extends Component {
 									<td>
 										<ButtonGroup>
 											<Link to={"editExpense/" + expenses.id} className="btn btn-sm btn-outline-primary"> <FontAwesomeIcon icon={faEdit}/></Link>{' '}
-											<Button size="sm" variant="outline-primary" onClick={this.deleteExpense.bind(this, expenses.id)}><FontAwesomeIcon icon={faTrash}/></Button>
+											<Button size="sm" variant="outline-danger" onClick={this.deleteExpense.bind(this, expenses.id)}><FontAwesomeIcon icon={faTrash}/></Button>
 										</ButtonGroup>
 									</td>
 								</tr>
