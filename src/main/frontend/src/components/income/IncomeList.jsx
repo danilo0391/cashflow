@@ -3,7 +3,7 @@ import { ButtonGroup, Card, Table, Button, InputGroup, FormControl } from "react
 
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faListUl, faTrash, faStepBackward, faFastBackward, faStepForward, faFastForward } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faListUl, faTrash, faStepBackward, faFastBackward, faStepForward, faFastForward, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
 import MyToast from "../MyToast";
 import authHeader from "../../services/auth-header";
 
@@ -17,6 +17,7 @@ export default class IncomeList extends Component {
 		super(props);
 		this.state = {
 			incomes: [],
+			search: '',
 			currentPage: 1,
 			incomesPerPage: 5
 		};
@@ -55,13 +56,22 @@ export default class IncomeList extends Component {
 
 	// Funcao para mudar a pagina
 	changePage = event => {
+		let targetPage = parseInt(event.target.value)
+		if(this.state.search) {
+			this.searchData(targetPage)
+		} else {
+			this.findAllIncomes(targetPage)
+		}
 		this.setState({
-			[event.target.name]: parseInt(event.target.value)
+			[event.target.name]: targetPage//parseInt(event.target.value)
 		});
 	};
 
 	// Funcao que faz voltar para a primeira pagina da lista
 	firstPage = () => {
+		if(this.state.search) {
+			this.searchData()
+		}
 		if(this.state.currentPage > 1){
 			this.setState({
 				currentPage: 1
@@ -96,8 +106,35 @@ export default class IncomeList extends Component {
 		}
 	};
 
+	searchChange = event => {
+		this.setState({
+			[event.target.name] : event.target.value
+		})
+	}
+
+	cancelSearch = () => {
+		this.setState({"search" : ""})
+		this.findAllIncomes(this.state.currentPage);
+	}
+
+	searchData = (currentPage) => {
+		currentPage -=1;
+		axios.get(API_URL+"search/"+this.state.search+"?page="+currentPage+"&size="+this.state.incomesPerPage, {
+			headers: { Authorization: authHeader().Authorization },
+		})
+		.then(response => response.data)
+		.then((data) => {
+			this.setState({
+				incomes: data.content,
+				totalPages: data.totalPages,
+				totalElements: data.totalElements,
+				currentPage: data.number + 1
+			})
+		})
+	}
+
 	render() {
-		const {incomes, currentPage, incomesPerPage} = this.state;
+		const {incomes, currentPage, incomesPerPage, search} = this.state;
 		const lastIndex = currentPage * incomesPerPage;
 		const firstIndex = lastIndex - incomesPerPage;
 		const currentIncomes = incomes.slice(firstIndex, lastIndex);
@@ -117,7 +154,25 @@ export default class IncomeList extends Component {
 				</div>
 
 				<Card className={"border border-ligth bg-light"}>
-				<Card.Header><FontAwesomeIcon icon={faListUl}/> Income List</Card.Header>
+				<Card.Header>
+					<div style={{"float":"left"}}>
+						<FontAwesomeIcon icon={faListUl}/> Income List
+					</div>
+					<div style={{"float":"right"}}>
+						<InputGroup size="sm">
+							<FormControl placeholder="Search" name="search" value={search} className={"bg-light"}
+							onChange={this.searchChange}/>
+							<InputGroup.Append>
+								<Button size="sm" variant="outline-primary" type="button" onClick={this.searchData}>
+									<FontAwesomeIcon icon={faSearch}/>
+								</Button>
+								<Button size="sm" variant="outline-danger" type="button" onClick={this.cancelSearch}>
+									<FontAwesomeIcon icon={faTimes}/>
+								</Button>
+							</InputGroup.Append>
+						</InputGroup>
+					</div>
+					</Card.Header>
 				<Card.Body>
 				<div>
 					<Table bordered hover striped variant="ligth">
@@ -133,12 +188,10 @@ export default class IncomeList extends Component {
 						</tbody>
 						<tbody>
 							{
-							// this.state.incomes.length === 0 ?
 							incomes.length === 0 ?
 							<tr aling="center">
 								<td colSpan="6"> No Incomes Available</td>
 							</tr> :
-							// this.state.incomes.map((income) => (
 								currentIncomes.map((incomes, index) => (
 								<tr key={index}>
 									<td> {incomes.id}</td>

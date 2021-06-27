@@ -3,7 +3,7 @@ import { ButtonGroup, Card, Table, Button, InputGroup, FormControl } from "react
 
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faList, faTrash, faStepBackward, faFastBackward, faStepForward, faFastForward } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faList, faTrash, faStepBackward, faFastBackward, faStepForward, faFastForward, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
 import MyToast from "../MyToast";
 import authHeader from "../../services/auth-header";
 
@@ -17,6 +17,7 @@ export default class ExpenseList extends Component {
 		super(props);
 		this.state = {
 			expenses: [],
+			search: '',
 			currentPage: 1,
 			expensesPerPage: 5
 		};
@@ -96,8 +97,35 @@ export default class ExpenseList extends Component {
 		}
 	};
 
+	searchChange = event => {
+		this.setState({
+			[event.target.name] : event.target.value
+		})
+	}
+
+	cancelSearch = () => {
+		this.setState({"search" : ""})
+		this.findAllExpenses(this.state.currentPage);
+	}
+
+	searchData = (currentPage) => {
+		currentPage -=1;
+		axios.get(API_URL+"search/"+this.state.search+"?page="+currentPage+"&size="+this.state.expensesPerPage, {
+			headers: { Authorization: authHeader().Authorization },
+		})
+		.then(response => response.data)
+		.then((data) => {
+			this.setState({
+				expenses: data.content,
+				totalPages: data.totalPages,
+				totalElements: data.totalElements,
+				currentPage: data.number + 1
+			})
+		})
+	}
+
 	render() {
-		const {expenses, currentPage, expensesPerPage} = this.state;
+		const {expenses, currentPage, expensesPerPage, search} = this.state;
 		const lastIndex = currentPage * expensesPerPage;
 		const firstIndex = lastIndex - expensesPerPage;
 		const currentexpenses = expenses.slice(firstIndex, lastIndex);
@@ -116,7 +144,25 @@ export default class ExpenseList extends Component {
 				</div>
 
 				<Card className={"border border-ligth bg-light"}>
-				<Card.Header><FontAwesomeIcon icon={faList}/> Expenses List</Card.Header>
+				<Card.Header>
+					<div style={{"float":"left"}}>
+					<FontAwesomeIcon icon={faList}/> Expenses List
+					</div>
+					<div style={{"float":"right"}}>
+					<InputGroup size="sm">
+							<FormControl placeholder="Search" name="search" value={search} className={"bg-light"}
+							onChange={this.searchChange}/>
+							<InputGroup.Append>
+								<Button size="sm" variant="outline-primary" type="button" onClick={this.searchData}>
+									<FontAwesomeIcon icon={faSearch}/>
+								</Button>
+								<Button size="sm" variant="outline-danger" type="button" onClick={this.cancelSearch}>
+									<FontAwesomeIcon icon={faTimes}/>
+								</Button>
+							</InputGroup.Append>
+						</InputGroup>
+					</div>
+					</Card.Header>
 				<Card.Body>
 				<div>
 					<Table bordered hover striped variant="ligth">

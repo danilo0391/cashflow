@@ -19,6 +19,7 @@ export default class Income extends Component {
 	constructor(props) {
 		super(props);
 		this.state = this.initialState;
+		this.state = { categories: [] };
 		this.state.show = false;
 		this.updateIncome = this.updateIncome.bind(this);
 		this.addIncome = this.addIncome.bind(this);
@@ -37,7 +38,23 @@ export default class Income extends Component {
 		if (incomeId) {
 			this.findIncomeById(incomeId);
 		}
+		this.findaAllCategories();
 	}
+
+	findaAllCategories = () => {
+		axios
+			.get(API_URL + "categories")
+			.then((response) => response.data)
+			.then((data) => {
+				this.setState({
+					categories: [{ value: "", display: "Select Category" }].concat(
+						data.map((category) => {
+							return { value: category, display: category };
+						})
+					),
+				});
+			});
+	};
 
 	findIncomeById = (incomeId) => {
 		axios
@@ -209,14 +226,19 @@ export default class Income extends Component {
 									<Form.Label>Category</Form.Label>
 									<Form.Control
 										required
-										autoComplete="off"
-										type="text"
+										as="select"
+										custom
+										onChange={this.incomeChange}
 										name="category"
 										value={category}
-										onChange={this.incomeChange}
 										className={"bg-ligth"}
-										placeholder="Enter category"
-									/>
+									>
+										{this.state.categories.map((category) => (
+											<option key={category.value} value={category.value}>
+												{category.display}
+											</option>
+										))}
+									</Form.Control>
 								</Form.Group>
 							</Form.Row>
 						</Card.Body>

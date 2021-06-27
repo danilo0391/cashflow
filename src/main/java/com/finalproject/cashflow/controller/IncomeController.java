@@ -4,10 +4,17 @@ import com.finalproject.cashflow.exceptions.ResourceNotFoundException;
 import com.finalproject.cashflow.model.Income;
 import com.finalproject.cashflow.repository.IncomeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -16,6 +23,12 @@ public class IncomeController {
 
     @Autowired
     private IncomeRepository incomeRepository;
+
+    @GetMapping("/incomes/search/{searchText}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<Page<Income>> findAll(Pageable pageable, @PathVariable String searchText) {
+        return new ResponseEntity<>(incomeRepository.findAll(pageable, searchText), HttpStatus.OK);
+    }
 
     @GetMapping("/incomes")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
@@ -62,6 +75,11 @@ public class IncomeController {
                 ()-> new ResourceNotFoundException("Income not found")
         );
         incomeRepository.delete(income);
+    }
+
+    @GetMapping("/incomes/categories")
+    public ResponseEntity<Set<String>> findAllCategories(){
+        return new ResponseEntity<>(new TreeSet<>(Arrays.asList("Donation", "Mass Offer", "Selling Actions")), HttpStatus.OK);
     }
 
 }

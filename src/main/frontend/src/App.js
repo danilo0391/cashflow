@@ -22,21 +22,23 @@ export default function App() {
 			<NavigationBar />
 			<Container>
 				<Row>
-					<Switch>
-						<Route path="/" exact component={Welcome} />
-						<Route path="/addIncome" exact component={Income} />
-						<Route path="/editIncome/:id" exact component={Income} />
-						<Route path="/listIncome" exact component={IncomeList} />
-						<Route path="/addExpense" exact component={Expense} />
-						<Route path="/editExpense/:id" exact component={Expense} />
-						<Route path="/listExpense" exact component={ExpenseList} />
-						<Route path="/listUser" exact component={UserList} />
-						<Route path="/editUser/:id" exact component={User} />
-						<Route path="/login" exact component={Login} />
-						<Route path="/logout" exact component={Welcome} />
-						<Route path="/register" exact component={Register} />
-						<Route path="/profile" exact component={Profile} />
-					</Switch>
+					<Col lg={12} className={"margin-top"}>
+						<Switch>
+							<Route path="/" exact component={Welcome} />
+							<Route path="/addIncome" exact component={Income} />
+							<Route path="/editIncome/:id" exact component={Income} />
+							<Route path="/listIncome" exact component={IncomeList} />
+							<Route path="/addExpense" exact component={Expense} />
+							<Route path="/editExpense/:id" exact component={Expense} />
+							<Route path="/listExpense" exact component={ExpenseList} />
+							<Route path="/listUser" exact component={UserList} />
+							<Route path="/editUser/:id" exact component={User} />
+							<Route path="/login" exact component={Login} />
+							<Route path="/logout" exact component={Welcome} />
+							<Route path="/register" exact component={Register} />
+							<Route path="/profile" exact component={Profile} />
+						</Switch>
+					</Col>
 				</Row>
 			</Container>
 			<Footer />

@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Component } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,7 +10,6 @@ import { Navbar, Nav } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import AuthService from "../services/auth-service";
-import AuthHeader from "../services/auth-header";
 
 export default class NavigationBar extends Component {
 	render() {
@@ -87,15 +85,12 @@ export default class NavigationBar extends Component {
 				<Link to={""} className="navbar-brand">
 					Home
 				</Link>
-				{
-					/* {AuthService.getCurrentUser() ? superUserLinks : guestLinks} */
-					AuthService.getCurrentUser() === null
-						? guestLinks
-						: AuthService.getCurrentUser().roles[0] === "ROLE_ADMIN" ||
-						  AuthService.getCurrentUser().roles[0] === "ROLE_MODERATOR"
-						? superUserLinks
-						: regularUserLinks
-				}
+				{AuthService.getCurrentUser() === null
+					? guestLinks
+					: AuthService.getCurrentUser().roles[0] === "ROLE_ADMIN" ||
+					  AuthService.getCurrentUser().roles[0] === "ROLE_MODERATOR"
+					? superUserLinks
+					: regularUserLinks}
 			</Navbar>
 		);
 	}
