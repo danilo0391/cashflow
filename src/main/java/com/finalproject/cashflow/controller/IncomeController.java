@@ -25,7 +25,6 @@ public class IncomeController {
     private IncomeRepository incomeRepository;
 
     @GetMapping("/incomes/search/{searchText}")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Page<Income>> findAll(Pageable pageable, @PathVariable String searchText) {
         return new ResponseEntity<>(incomeRepository.findAll(pageable, searchText), HttpStatus.OK);
     }

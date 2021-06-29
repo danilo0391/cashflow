@@ -25,7 +25,6 @@ public class ExpenseController {
     private ExpenseRespository expenseRespository;
 
     @GetMapping("/expenses/search/{searchText}")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Page<Expense>> findAll(Pageable pageable, @PathVariable String searchText) {
         return new ResponseEntity<>(expenseRespository.findAll(pageable, searchText), HttpStatus.OK);
     }
